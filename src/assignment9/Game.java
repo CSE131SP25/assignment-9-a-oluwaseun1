@@ -1,62 +1,84 @@
 package assignment9;
 
-import java.awt.event.KeyEvent;
-
 import edu.princeton.cs.introcs.StdDraw;
+import java.awt.Color;
 
 public class Game {
-	
+	private Snake snake;
+	private Food food;
+	private int applesEaten = 0;
+	private boolean isPaused = false;
+
 	public Game() {
+		this.snake = new Snake();
+		this.food = new Food();
+
+		StdDraw.setCanvasSize(500, 500);
+		StdDraw.setXscale(0, 1);
+		StdDraw.setYscale(0, 1);
 		StdDraw.enableDoubleBuffering();
-		
-		//FIXME - construct new Snake and Food objects
 	}
-	
-	public void play() {
-		while (true) { //TODO: Update this condition to check if snake is in bounds
-			int dir = getKeypress();
-			//Testing only: you will eventually need to do more work here
-			System.out.println("Keypress: " + dir);
-			
-			/*
-			 * 1. Pass direction to your snake
-			 * 2. Tell the snake to move
-			 * 3. If the food has been eaten, make a new one
-			 * 4. Update the drawing
-			 */
+
+	public void run() {
+		while (true) {
+			if (!isPaused) {
+				StdDraw.clear();
+
+				snake.move();
+
+				if (snake.eats(food)) {
+					snake.grow();
+					food.relocate();
+					applesEaten++;
+				}
+
+				if (snake.hitsWall()) {
+					break;
+				}
+
+				snake.draw();
+				food.draw();
+
+				StdDraw.setPenColor(Color.BLACK);
+				StdDraw.textLeft(0.02, 0.97, "Apples Eaten: " + applesEaten);
+			} else {
+				StdDraw.setPenColor(Color.PINK);
+				StdDraw.text(0.5, 0.5, "Paused - Press P to Resume");
+			}
+
+			StdDraw.show();
+			StdDraw.pause(100);
+
+			// Arrow key movement
+			if (StdDraw.isKeyPressed(38)) {
+				snake.changeDirection(0, 0.02); // UP
+			} else if (StdDraw.isKeyPressed(40)) {
+				snake.changeDirection(0, -0.02); // DOWN
+			} else if (StdDraw.isKeyPressed(37)) {
+				snake.changeDirection(-0.02, 0); // LEFT
+			} else if (StdDraw.isKeyPressed(39)) {
+				snake.changeDirection(0.02, 0); // RIGHT
+			}
+
+			// Pause/Unpause with 'P' key
+			if (StdDraw.hasNextKeyTyped()) {
+				char key = StdDraw.nextKeyTyped();
+				if (key == 'p' || key == 'P') {
+					isPaused = !isPaused;
+				}
+			}
 		}
+
+		// Game over screen
+		StdDraw.clear();
+		StdDraw.setPenColor(Color.BLACK);
+		StdDraw.text(0.5, 0.55, "Game Over!");
+		StdDraw.text(0.5, 0.5, "Apples Eaten: " + applesEaten);
+		StdDraw.show();
 	}
-	
-	private int getKeypress() {
-		if(StdDraw.isKeyPressed(KeyEvent.VK_W)) {
-			return 1;
-		} else if (StdDraw.isKeyPressed(KeyEvent.VK_S)) {
-			return 2;
-		} else if (StdDraw.isKeyPressed(KeyEvent.VK_A)) {
-			return 3;
-		} else if (StdDraw.isKeyPressed(KeyEvent.VK_D)) {
-			return 4;
-		} else {
-			return -1;
-		}
-	}
-	
-	/**
-	 * Clears the screen, draws the snake and food, pauses, and shows the content
-	 */
-	private void updateDrawing() {
-		//FIXME
-		
-		/*
-		 * 1. Clear screen
-		 * 2. Draw snake and food
-		 * 3. Pause (50 ms is good)
-		 * 4. Show
-		 */
-	}
-	
+
 	public static void main(String[] args) {
-		Game g = new Game();
-		g.play();
+		Game game = new Game();
+		game.run();
 	}
 }

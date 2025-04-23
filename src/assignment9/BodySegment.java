@@ -1,25 +1,27 @@
 package assignment9;
 
+import edu.princeton.cs.introcs.StdDraw;
 import java.awt.Color;
 
-import edu.princeton.cs.introcs.StdDraw;
-
 public class BodySegment {
+	private double x, y; // using double for compatibility with StdDraw
+	private static final double SIZE = 0.02; // based on StdDraw 0-1 coordinate system
 
-	private double x, y, size;
-	private Color color;
-	
-	public BodySegment(double x, double y, double size) {
-		//FIXME
-		
-		//See ColorUtils for some color options (or choose your own)
+	public BodySegment(double x, double y) {
+		this.x = x;
+		this.y = y;
 	}
-	
-	/**
-	 * Draws the segment
-	 */
+
 	public void draw() {
-		//FIXME
+		StdDraw.setPenColor(Color.GREEN);
+		StdDraw.filledSquare(x, y, SIZE / 2); // square centered at (x, y)
 	}
-	
+
+	public double getX() { return x; }
+	public double getY() { return y; }
+
+	public void setPosition(double x, double y) {
+		this.x = x;
+		this.y = y;
+	}
 }
